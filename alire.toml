@@ -1,0 +1,10 @@
+name = "advent2024"
+description = "Advent of code solutions for 2024"
+version = "0.1.0-dev"
+
+authors = ["Chris Stinson"]
+maintainers = ["Chris Stinson <example@example.com>"]
+maintainers-logins = ["github-username"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+website = ""
+tags = []

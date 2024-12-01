@@ -1,0 +1,7 @@
+/obj/
+/bin/
+/alire/
+/config/
+
+/examples/day*
+problems/day*

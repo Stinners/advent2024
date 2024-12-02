@@ -4,6 +4,7 @@ with Ada.Exceptions; use Ada.Exceptions;
 with Input;
 
 with Day1;
+with Day2;
 
 procedure Advent2024 is
    Run_Command : Input.Run;
@@ -19,6 +20,7 @@ begin
       Answer :=
         (case Run_Command.Day is
            when 1 => Day1.Solve (File),
+           when 2 => Day2.Solve (File),
            when others => raise Program_Error with "Solution not finished");
       --!pp on
 

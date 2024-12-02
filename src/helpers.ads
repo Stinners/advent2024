@@ -18,13 +18,11 @@ package Helpers is
    function Integer_Hash (Key : Integer) return Ada.Containers.Hash_Type;
 
    package Integer_Hashed_Maps is new Ada.Containers.Hashed_Maps
-     (Key_Type => Integer, Element_Type => Integer, Hash => Integer_Hash,
-      Equivalent_Keys => "=");
+     (Key_Type => Integer, Element_Type => Integer, Hash => Integer_Hash, Equivalent_Keys => "=");
    subtype Int_Hash is Integer_Hashed_Maps.Map;
 
    ----------------------------------------------------------------------
 
    procedure Skip_Whitespace (Line : String; Idx : in out Integer);
-   function Read_Int (Line : String; Idx : in out Integer) return Integer;
 
 end Helpers;

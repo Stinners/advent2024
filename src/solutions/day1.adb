@@ -1,33 +1,27 @@
-with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Text_IO;         use Ada.Text_IO;
+with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
 with Helpers;
 
 package body Day1 is
    package H renames Helpers;
 
-   type Input_Type is record
-      Left  : H.Int_Vector;
-      Right : H.Int_Vector;
-   end record;
+   --------------------------------------------------------------------------
 
-   function Parse_Input (File : File_Acc) return Input_Type is
-      Line                      : String (1 .. 50);
-      Left_Num, Right_Num, Last : Integer;
-      Pairs                     : Input_Type;
-      Idx                       : Natural;
+   procedure Parse_Input (File : File_Acc; Left, Right : out H.Int_Vector) is
+      Line         : String (1 .. 50);
+      Number, Last : Integer;
+      Idx          : Natural;
    begin
-
       while not End_Of_File (File.all) loop
          Get_Line (File.all, Line, Last);
-         Idx       := Line'First;
-         Left_Num  := H.Read_Int (Line, Idx);
-         Right_Num := H.Read_Int (Line, Idx);
 
-         Pairs.Left.Append (Left_Num);
-         Pairs.Right.Append (Right_Num);
+         Get (Item => Number, From => Line (1 .. Line'Last), Last => Idx);
+         Left.Append (Number);
+
+         Get (Item => Number, From => Line (Idx + 1 .. Line'Last), Last => Idx);
+         Right.Append (Number);
       end loop;
-
-      return Pairs;
    end Parse_Input;
 
    --------------------------------------------------------------------------
@@ -56,12 +50,12 @@ package body Day1 is
    function Solve (File : File_Acc) return Solution is
       use H.Integer_Hashed_Maps;
 
-      Input                   : constant Input_Type := Parse_Input (File);
-      Left                    : H.Int_Vector        := Input.Left;
-      Right                   : H.Int_Vector        := Input.Right;
-      Part1, Part2, Left_Elem : Integer             := 0;
-      Counts : constant H.Int_Hash := Count_Occurrances (Right);
+      Left, Right             : H.Int_Vector;
+      Part1, Part2, Left_Elem : Integer := 0;
+      Counts                  : H.Int_Hash;
    begin
+      Parse_Input (File, Left, Right);
+      Counts := Count_Occurrances (Left);
 
       H.Int_Sorter.Sort (Left);
       H.Int_Sorter.Sort (Right);

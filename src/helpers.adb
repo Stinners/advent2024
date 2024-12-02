@@ -18,23 +18,10 @@ package body Helpers is
 
    procedure Skip_Whitespace (Line : String; Idx : in out Integer) is
    begin
-      while Idx <= Line'Last
-        and then Line (Idx) in ' ' | ASCII.HT | ASCII.LF | ASCII.CR
-      loop
+      while Idx <= Line'Last and then Line (Idx) in ' ' | ASCII.HT | ASCII.LF | ASCII.CR loop
          Idx := @ + 1;
       end loop;
    end Skip_Whitespace;
-
-   --------------------------------------------------------------------------
-
-   function Read_Int (Line : String; Idx : in out Integer) return Integer is
-      Output : Integer;
-   begin
-      Skip_Whitespace (Line, Idx);
-      Get (Item => Output, From => Line (Idx .. Line'Last), Last => Idx);
-      Idx := Idx + 1;
-      return Output;
-   end Read_Int;
 
    --------------------------------------------------------------------------
 

@@ -9,27 +9,22 @@ package body Day2 is
 
    function Is_Line_Safe (Numbers : H.Int_Vector) return Boolean is
       Difference, Last_Difference : Integer := 0;
-      Last_Number                 : Integer := Numbers.First_Element;
       Is_Safe                     : Boolean := True;
       Number                      : Integer;
    begin
-
       for Idx in 1 .. Numbers.Last_Index loop
          Number     := Numbers (Idx);
-         Difference := Number - Last_Number;
+         Difference := Number - Numbers (Idx - 1);
 
-         --  Check if the difference is small enough
-         Is_Safe := abs (Difference) >= 1 and then abs (Difference) <= 3;
-
-         --  Check the ordering is consistent
-         Is_Safe := Is_Safe and then (Difference * Last_Difference) >= 0;
-
-         Last_Number     := Number;
-         Last_Difference := Difference;
+         Is_Safe :=
+           abs (Difference) >= 1 and then abs (Difference) <= 3
+           and then (Difference * Last_Difference) >= 0;
 
          if not Is_Safe then
-            exit;
+            return False;
          end if;
+
+         Last_Difference := Difference;
 
       end loop;
 

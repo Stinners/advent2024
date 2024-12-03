@@ -23,8 +23,7 @@ package Input is
 
    function Get_Input_File (Command : Run) return File_Acc;
 
-   package Line_Vec_Pkg is new Indefinite_Vectors
-     (Index_Type => Positive, Element_Type => String);
+   package Line_Vec_Pkg is new Indefinite_Vectors (Index_Type => Positive, Element_Type => String);
    subtype Line_Vec is Line_Vec_Pkg.Vector;
 
    function Read_Lines (File : File_Acc) return Line_Vec;

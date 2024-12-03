@@ -1,6 +1,5 @@
-with Ada.Strings;         use Ada.Strings;
-with Ada.Strings.Fixed;   use Ada.Strings.Fixed;
-with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
+with Ada.Strings;       use Ada.Strings;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
 package body Helpers is
 

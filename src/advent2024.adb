@@ -5,6 +5,7 @@ with Input;
 
 with Day1;
 with Day2;
+with Day3;
 
 procedure Advent2024 is
    Run_Command : Input.Run;
@@ -21,6 +22,7 @@ begin
         (case Run_Command.Day is
            when 1 => Day1.Solve (File),
            when 2 => Day2.Solve (File),
+           when 3 => Day3.Solve (File),
            when others => raise Program_Error with "Solution not finished");
       --!pp on
 
@@ -30,5 +32,10 @@ begin
    exception
       when E : Input.Input_Exception =>
          Put_Line (Exception_Message (E));
+
    end;
+
+   if Is_Open (File.all) then
+      Close (File.all);
+   end if;
 end Advent2024;

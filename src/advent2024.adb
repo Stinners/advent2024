@@ -1,7 +1,7 @@
 with Ada.Text_IO;    use Ada.Text_IO;
 with Ada.Exceptions; use Ada.Exceptions;
 
-with Input;
+with Input; use Input;
 
 with Day1;
 with Day2;
@@ -37,7 +37,7 @@ begin
 
    end;
 
-   if Is_Open (File.all) then
+   if File /= null and then Is_Open (File.all) then
       Close (File.all);
    end if;
 end Advent2024;

@@ -1,7 +1,6 @@
 with Ada.Text_IO;         use Ada.Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
---  Not 364
 with Helpers;
 
 package body Day2 is
@@ -33,40 +32,37 @@ package body Day2 is
 
    ------------------------------------------------------------------------
 
-   procedure Remove_Idx (Source : H.Int_Vector; Dest : in out H.Int_Vector; Skip : Integer) is
+   function Parse_Line (File : File_Acc) return H.Int_Vector is
+      Number, Idx, Last : Integer := 0;
+      Line              : String (1 .. 50);
+      Numbers           : H.Int_Vector;
    begin
-      Dest.Clear;
-      for Idx in Source.First_Index .. Source.Last_Index loop
-         if Idx /= Skip then
-            Dest.Append (Source (Idx));
-         end if;
+      Get_Line (File.all, Line, Last);
+
+      while Idx < Last loop
+         Get (Item => Number, From => Line (Idx + 1 .. Last), Last => Idx);
+         Numbers.Append (Number);
       end loop;
-   end Remove_Idx;
+
+      return Numbers;
+   end Parse_Line;
 
    ------------------------------------------------------------------------
 
    function Solve (File : File_Acc) return Solution is
-      Last, Part1, Part2    : Integer := 0;
+      Part1, Part2          : Integer := 0;
       Numbers, Skip_Numbers : H.Int_Vector;
-      Idx, Number           : Integer;
-      Line                  : String (1 .. 50);
    begin
       while not End_Of_File (File.all) loop
-         Get_Line (File.all, Line, Last);
-
-         Numbers.Clear;
-         Idx := 0;
-         while Idx < Last loop
-            Get (Item => Number, From => Line (Idx + 1 .. Last), Last => Idx);
-            Numbers.Append (Number);
-         end loop;
+         Numbers := Parse_Line (File);
 
          if Is_Line_Safe (Numbers) then
             Part1 := @ + 1;
             Part2 := @ + 1;
          else
             for Skip in Numbers.First_Index .. Numbers.Last_Index loop
-               Remove_Idx (Numbers, Skip_Numbers, Skip);
+               Skip_Numbers := Numbers;
+               Skip_Numbers.Delete (Skip);
                if Is_Line_Safe (Skip_Numbers) then
                   Part2 := @ + 1;
                   exit;

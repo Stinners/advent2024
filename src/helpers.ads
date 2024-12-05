@@ -1,5 +1,3 @@
-with Ada.Text_IO;         use Ada.Text_IO;
-with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Containers.Indefinite_Vectors;
 with Ada.Containers.Hashed_Maps;
 
@@ -12,7 +10,6 @@ package Helpers is
    package Int_Vectors is new Ada.Containers.Indefinite_Vectors
      (Index_Type => Natural, Element_Type => Integer);
    subtype Int_Vector is Int_Vectors.Vector;
-   use Int_Vectors;
 
    package Int_Sorter is new Int_Vectors.Generic_Sorting;
 

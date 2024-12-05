@@ -4,9 +4,7 @@ with GNAT.Regpat; use GNAT.Regpat;
 package body Day3 is
 
    function Match_To_Int (Str : String; This_Match : Match_Location) return Integer is
-   begin
-      return Integer'Value (Str (This_Match.First .. This_Match.Last));
-   end Match_To_Int;
+     (Integer'Value (Str (This_Match.First .. This_Match.Last)));
 
    --------------------------------------------------------------------------
 
@@ -18,10 +16,7 @@ package body Day3 is
    begin
       loop
          Match (Re, Haystack (Idx .. Last), Matches);
-
-         if Matches (0) = No_Match then
-            exit;
-         end if;
+         exit when Matches (0) = No_Match;
 
          Total := @ + Match_To_Int (Haystack, Matches (1)) * Match_To_Int (Haystack, Matches (2));
 
@@ -43,10 +38,7 @@ package body Day3 is
    begin
       loop
          Match (Re, Haystack (Idx .. Last), Matches);
-
-         if Matches (0) = No_Match then
-            exit;
-         end if;
+         exit when Matches (0) = No_Match;
 
          First_Chars := Haystack (Matches (0).First .. Matches (0).First + 2);
 

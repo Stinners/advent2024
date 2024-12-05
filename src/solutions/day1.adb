@@ -5,6 +5,7 @@ with Helpers;
 
 package body Day1 is
    package H renames Helpers;
+   use H.Integer_Hashed_Maps;
 
    --------------------------------------------------------------------------
 
@@ -19,7 +20,7 @@ package body Day1 is
          Get (Item => Number, From => Line (1 .. Line'Last), Last => Idx);
          Left.Append (Number);
 
-         Get (Item => Number, From => Line (Idx + 1 .. Line'Last), Last => Idx);
+         Get (Item => Number, From => Line (Idx + 2 .. Line'Last), Last => Idx);
          Right.Append (Number);
       end loop;
    end Parse_Input;
@@ -27,8 +28,6 @@ package body Day1 is
    --------------------------------------------------------------------------
 
    function Count_Occurrances (Nums : H.Int_Vector) return H.Int_Hash is
-      use H.Integer_Hashed_Maps;
-
       Result : H.Int_Hash;
       Elem   : Cursor;
    begin
@@ -48,8 +47,6 @@ package body Day1 is
    --------------------------------------------------------------------------
 
    function Solve (File : File_Acc) return Solution is
-      use H.Integer_Hashed_Maps;
-
       Left, Right             : H.Int_Vector;
       Part1, Part2, Left_Elem : Integer := 0;
       Counts                  : H.Int_Hash;

@@ -8,3 +8,7 @@ maintainers-logins = ["github-username"]
 licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
 website = ""
 tags = []
+
+[build-switches]
+"*".ada_version = "Ada2022"
+"*".style_checks = ["-gnatyM100"]

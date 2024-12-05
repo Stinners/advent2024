@@ -7,6 +7,7 @@ with Day1;
 with Day2;
 with Day3;
 with Day4;
+with Day5;
 
 procedure Advent2024 is
    Run_Command : Input.Run;
@@ -25,6 +26,7 @@ begin
            when 2 => Day2.Solve (File),
            when 3 => Day3.Solve (File),
            when 4 => Day4.Solve (File),
+           when 5 => Day5.Solve (File),
            when others => raise Program_Error with "Solution not finished");
       --!pp on
 

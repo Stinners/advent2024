@@ -30,6 +30,7 @@ package body Day4 is
       end loop;
 
       return (Grid => Grid, Width => Last, Height => Line_N);
+
    end Build_Grid;
 
    --------------------------------------------------------------------------
@@ -55,6 +56,7 @@ package body Day4 is
          Idx_Y := @ + Step (2);
       end loop;
       return Candidate = "XMAS" or else Candidate = "SAMX";
+
    end Is_Xmas;
 
    --------------------------------------------------------------------------
@@ -62,6 +64,7 @@ package body Day4 is
    function Is_X_Mas (Grid : Wordsearch; X, Y : Natural) return Boolean is
       Candidate1, Candidate2 : String (1 .. 3);
    begin
+
       if X + 2 > Grid.Width or else Y + 2 > Grid.Height then
          return False;
       end if;
@@ -82,15 +85,15 @@ package body Day4 is
    function Solve (File : File_Acc) return Solution is
       Grid         : constant Wordsearch := Build_Grid (File);
       Part1, Part2 : Integer             := 0;
-      Steps        : constant Step_Vec   := [[1, 0], [0, 1], [1, 1], [-1, 1]];
+      Directions   : constant Step_Vec   := [[1, 0], [0, 1], [1, 1], [-1, 1]];
    begin
 
       for Y in 1 .. Grid.Height loop
          for X in 1 .. Grid.Width loop
 
             --  Part 1  --
-            for Step of Steps loop
-               if Is_Xmas (Grid, X, Y, Step) then
+            for Dir of Directions loop
+               if Is_Xmas (Grid, X, Y, Dir) then
                   Part1 := @ + 1;
                end if;
             end loop;
@@ -104,6 +107,7 @@ package body Day4 is
       end loop;
 
       return (Part1 => Part1, Part2 => Part2);
+
    end Solve;
 
 end Day4;

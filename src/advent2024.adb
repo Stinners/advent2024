@@ -9,6 +9,7 @@ with Day3;
 with Day4;
 with Day5;
 with Day6;
+with Day7;
 
 procedure Advent2024 is
    Run_Command : Input.Run;
@@ -29,11 +30,16 @@ begin
            when 4 => Day4.Solve (File),
            when 5 => Day5.Solve (File),
            when 6 => Day6.Solve (File),
+           when 7 => Day7.Solve (File),
            when others => raise Program_Error with "Solution not finished");
       --!pp on
 
-      Put_Line ("Part 1:" & Answer.Part1'Img);
-      Put_Line ("Part 2:" & Answer.Part2'Img);
+      -- The real results of day 7 are Big_Integers, so we need to handle them
+      -- specially
+      if Run_Command.Day /= 7 then
+         Put_Line ("Part 1:" & Answer.Part1'Img);
+         Put_Line ("Part 2:" & Answer.Part2'Img);
+      end if;
 
    exception
       when E : Input.Input_Exception =>

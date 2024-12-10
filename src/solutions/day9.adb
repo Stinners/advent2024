@@ -1,7 +1,6 @@
 with Ada.Text_IO;                           use Ada.Text_IO;
 with Ada.Containers;                        use Ada.Containers;
 with Ada.Numerics.Big_Numbers.Big_Integers; use Ada.Numerics.Big_Numbers.Big_Integers;
-with Ada.Containers.Indefinite_Vectors;
 
 with Helpers;
 
@@ -64,44 +63,55 @@ package body Day9 is
    -------------------------------------------------------
 
    procedure Compact_Memory_Part2 (Memory : in out H.Int_Vector) is
-      File_Start, File_End : Integer := Memory.Last_Index;
-      Current_File : Integer := 1000;
-      First_Empty : Integer := Memory.First_Index;
-      Last_Page   : Integer := Memory.Last_Index;
+      File_Start, File_End    : Integer := Memory.Last_Index;
+      Empty_Start             : Integer;
+      Current_File            : Integer := Integer'Last;
+      Block_Size              : Integer;
+      In_Empty                : Boolean := False;
    begin
-      loop
+       Compacting:
+       loop 
+           --  Move the File_End index back until we find the end of the next block 
+           while Memory(File_End) = -1 or else Memory(File_End) > Current_File loop
+               File_End := @ - 1;
+               exit Compacting when File_End <= Memory.First_Index;
+           end loop;
+           Current_File := Memory(File_End);
 
-         -- Find the start of the pages
 
+           -- Find the start of that block 
+           File_Start := File_End;
+           for Idx in reverse Memory.First_Index .. File_End loop
+               exit when Memory (Idx) /= Current_File;
+               File_Start := Idx;
+           end loop;
+           Block_Size := File_End - File_Start;
 
-      end loop;
-   end Compact_Memory;
+           -- Look for an empty section of the correct size 
+           for Empty_End in Memory.First_Index .. File_Start loop 
 
+                if not In_Empty and Memory(Empty_End) = -1 then 
+                    Empty_Start := Empty_End;
+                    In_Empty := True;
+                elsif In_Empty and Memory (Empty_End) /= -1 then 
+                    In_Empty := False;
+                end if;
 
-   -------------------------------------------------------
+                --  If we find one then replace the contents of the blocks
+                if In_Empty and then (Empty_End - Empty_Start) = Block_Size then 
+                    for I in 0 .. Block_Size loop 
+                        Memory (Empty_Start + I) := Current_File;
+                        Memory (File_Start + I) := -1;
+                    end loop;
+                    exit;
+                end if;
+           end loop;
 
-   procedure Compact_Memory (Memory : in out H.Int_Vector) is
-      First_Empty : Integer := Memory.First_Index;
-      Last_Page   : Integer := Memory.Last_Index;
-   begin
-      loop
+           File_End := File_Start - 1;
+           exit when File_End <= Memory.First_Index;
 
-         -- Find the first Empty Block
-         while Memory (First_Empty) /= -1 loop
-            First_Empty := @ + 1;
-         end loop;
-
-         while Memory (Last_Page) = -1 loop
-            Last_Page := @ - 1;
-         end loop;
-
-         exit when First_Empty > Last_Page;
-
-         Memory (First_Empty) := Memory (Last_Page);
-         Memory (Last_Page)   := -1;
-
-      end loop;
-   end Compact_Memory;
+        end loop Compacting;
+   end Compact_Memory_Part2;
 
    -------------------------------------------------------
 
@@ -111,26 +121,33 @@ package body Day9 is
    begin
 
       for Number of Memory loop
-         exit when Number = -1;
-         Sum      := @ + (Position * To_Big_Integer (Number));
-         Position := @ + 1;
+          if Number /= -1 then 
+             Sum      := @ + (Position * To_Big_Integer (Number));
+          end if;
+          Position := @ + 1;
       end loop;
 
       return Sum;
    end Checksum;
 
    -------------------------------------------------------
-   -- 7891029320 is too low
-   --  6349606724455
+   --
    function Solve (File : File_Acc) return Solution is
       Part1, Part2 : Big_Integer := 0;
       Memory       : H.Int_Vector;
+      Memory2      : H.Int_Vector;
    begin
       Memory := Parse_File (File);
+      Memory2 := Memory;
+
       Compact_Memory (Memory);
       Part1 := Checksum (Memory);
 
+      Compact_Memory_Part2(Memory2);
+      Part2 := Checksum(Memory2);
+
       Put_Line (Part1'Img);
+      Put_Line (Part2'Img);
       return (Part1 => 0, Part2 => 0);
    end Solve;
 

@@ -13,10 +13,13 @@ with Day7;
 with Day8;
 with Day9;
 
+with Helpers; use Helpers;
+
 procedure Advent2024 is
    Run_Command : Input.Run;
    File        : Input.File_Acc;
    Answer      : Input.Solution;
+   Big_Ints    : constant Int_Vector := [7, 9];
 begin
 
    begin
@@ -38,9 +41,8 @@ begin
            when others => raise Program_Error with "Solution not finished");
       --!pp on
 
-      -- The real results of day 7 are Big_Integers, so we need to handle them
-      -- specially
-      if Run_Command.Day /= 7 then
+      --  A few days need to return big integers as their results
+      if not Big_Ints.Contains(Run_Command.Day) then 
          Put_Line ("Part 1:" & Answer.Part1'Img);
          Put_Line ("Part 2:" & Answer.Part2'Img);
       end if;

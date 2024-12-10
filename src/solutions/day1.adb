@@ -1,15 +1,14 @@
 with Ada.Text_IO;         use Ada.Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
-with Helpers;
+with Helpers; use Helpers;
+use Helpers.Integer_Hashed_Maps;
 
 package body Day1 is
-   package H renames Helpers;
-   use H.Integer_Hashed_Maps;
 
    --------------------------------------------------------------------------
 
-   procedure Parse_Input (File : File_Acc; Left, Right : out H.Int_Vector) is
+   procedure Parse_Input (File : File_Acc; Left, Right : out Int_Vector) is
       Line         : String (1 .. 50);
       Number, Last : Integer;
       Idx          : Natural;
@@ -27,8 +26,8 @@ package body Day1 is
 
    --------------------------------------------------------------------------
 
-   function Count_Occurrances (Nums : H.Int_Vector) return H.Int_Hash is
-      Result : H.Int_Hash;
+   function Count_Occurrances (Nums : Int_Vector) return Int_Hash is
+      Result : Int_Hash;
       Elem   : Cursor;
    begin
 
@@ -47,15 +46,15 @@ package body Day1 is
    --------------------------------------------------------------------------
 
    function Solve (File : File_Acc) return Solution is
-      Left, Right             : H.Int_Vector;
+      Left, Right             : Int_Vector;
       Part1, Part2, Left_Elem : Integer := 0;
-      Counts                  : H.Int_Hash;
+      Counts                  : Int_Hash;
    begin
       Parse_Input (File, Left, Right);
       Counts := Count_Occurrances (Left);
 
-      H.Int_Sorter.Sort (Left);
-      H.Int_Sorter.Sort (Right);
+      Int_Sorter.Sort (Left);
+      Int_Sorter.Sort (Right);
 
       for Idx in Left.First_Index .. Left.Last_Index loop
          Left_Elem := Left (Idx);

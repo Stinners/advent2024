@@ -2,18 +2,15 @@ with Ada.Text_IO;                           use Ada.Text_IO;
 with Ada.Containers;                        use Ada.Containers;
 with Ada.Numerics.Big_Numbers.Big_Integers; use Ada.Numerics.Big_Numbers.Big_Integers;
 
-with Helpers;
+with Helpers; use Helpers;
 
 package body Day9 is
-   package H renames Helpers;
 
-   -------------------------------------------------------
-
-   function Parse_File (File : File_Acc) return H.Int_Vector is
+   function Parse_File (File : File_Acc) return Int_Vector is
       N_Blocks, Block_Idx, Last, Block_Label : Integer := 0;
       Line                                   : String (1 .. 22_000);
       Empty_Space                            : Boolean := False;
-      Memory                                 : H.Int_Vector;
+      Memory                                 : Int_Vector;
    begin
       Get_Line (File.all, Line, Last);
 
@@ -37,7 +34,7 @@ package body Day9 is
 
    -------------------------------------------------------
 
-   procedure Compact_Memory (Memory : in out H.Int_Vector) is
+   procedure Compact_Memory (Memory : in out Int_Vector) is
       First_Empty : Integer := Memory.First_Index;
       Last_Page   : Integer := Memory.Last_Index;
    begin
@@ -62,25 +59,26 @@ package body Day9 is
 
    -------------------------------------------------------
 
-   procedure Compact_Memory_Part2 (Memory : in out H.Int_Vector) is
+   procedure Compact_Memory_Part2 (Memory : in out Int_Vector) is
       File_Start, File_End    : Integer := Memory.Last_Index;
       Empty_Start             : Integer;
       Current_File            : Integer := Integer'Last;
       Block_Size              : Integer;
-      In_Empty                : Boolean := False;
+      In_Empty, Found_Block   : Boolean := False;
    begin
        Compacting:
        loop 
            --  Move the File_End index back until we find the end of the next block 
-           while Memory(File_End) = -1 or else Memory(File_End) > Current_File loop
-               File_End := @ - 1;
-               exit Compacting when File_End <= Memory.First_Index;
+           for Idx in reverse Memory.First_Index .. File_Start loop 
+               File_End := Idx;
+               exit when Memory(Idx) /= -1 and then Memory(Idx) < Current_File;
            end loop;
-           Current_File := Memory(File_End);
 
+           exit when File_End = Memory.First_Index;
+           Current_File := Memory(File_End);
+           File_Start := File_End;
 
            -- Find the start of that block 
-           File_Start := File_End;
            for Idx in reverse Memory.First_Index .. File_End loop
                exit when Memory (Idx) /= Current_File;
                File_Start := Idx;
@@ -96,16 +94,19 @@ package body Day9 is
                 elsif In_Empty and Memory (Empty_End) /= -1 then 
                     In_Empty := False;
                 end if;
+                
+                Found_Block := In_Empty and then (Empty_End - Empty_Start) = Block_Size;
+                exit when Found_Block;
 
-                --  If we find one then replace the contents of the blocks
-                if In_Empty and then (Empty_End - Empty_Start) = Block_Size then 
-                    for I in 0 .. Block_Size loop 
-                        Memory (Empty_Start + I) := Current_File;
-                        Memory (File_Start + I) := -1;
-                    end loop;
-                    exit;
-                end if;
            end loop;
+
+            --  If we find one then replace the contents of the blocks
+            if Found_Block then
+                for I in 0 .. Block_Size loop 
+                    Memory (Empty_Start + I) := Current_File;
+                    Memory (File_Start + I) := -1;
+                end loop;
+            end if;
 
            File_End := File_Start - 1;
            exit when File_End <= Memory.First_Index;
@@ -115,7 +116,7 @@ package body Day9 is
 
    -------------------------------------------------------
 
-   function Checksum (Memory : H.Int_Vector) return Big_Integer is
+   function Checksum (Memory : Int_Vector) return Big_Integer is
       Sum      : Big_Integer := 0;
       Position : Big_Integer := 0;
    begin
@@ -133,9 +134,8 @@ package body Day9 is
    -------------------------------------------------------
    --
    function Solve (File : File_Acc) return Solution is
-      Part1, Part2 : Big_Integer := 0;
-      Memory       : H.Int_Vector;
-      Memory2      : H.Int_Vector;
+      Part1, Part2    : Big_Integer := 0;
+      Memory, Memory2 : Int_Vector;
    begin
       Memory := Parse_File (File);
       Memory2 := Memory;
@@ -146,8 +146,8 @@ package body Day9 is
       Compact_Memory_Part2(Memory2);
       Part2 := Checksum(Memory2);
 
-      Put_Line (Part1'Img);
-      Put_Line (Part2'Img);
+      Put_Line ("Part1: " & Part1'Img);
+      Put_Line ("Part2: " & Part2'Img);
       return (Part1 => 0, Part2 => 0);
    end Solve;
 

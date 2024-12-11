@@ -22,6 +22,9 @@ package body Helpers is
       end loop;
    end Skip_Whitespace;
 
+   function Char_To_Int(C : Character) return Integer is 
+      (Character'Pos (C) - Character'Pos ('0'));  
+
    --------------------------------------------------------------------------
 
 end Helpers;

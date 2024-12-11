@@ -29,7 +29,19 @@ package Vector2D is
      (Element_Type => Vec2D, Hash => Vec2D_Hash, Equivalent_Elements => "=");
    subtype Vec2D_Set is Vec2D_Sets.Set;
 
-   ------------------------------------------------------------------
+    -------------------------------------------------------
+   
+   type Direction is (Up, Down, Left, Right);
+   type Unit_Vector_Type is array (Direction) of Vec2D;
+   Unit_Vectors : constant Unit_Vector_Type :=
+     [(X => 0, Y => -1), (X => 0, Y => 1), (X => -1, Y => 0), (X => 1, Y => 0)];
+
+   type Neighbour_Vector_Type is array (1 .. 8) of Vec2D;
+   Neighbour_Vectors : constant  Neighbour_Vector_Type := 
+     [(0, -1),  (0, 1),  (-1, 0), (1, 0),
+      (-1, 1),  (1, -1), (1 , 1), (-1, -1)];
+   
+    ------------------------------------------------------------------
 
    function In_Bounds (V, Size : Vec2D) return Boolean;
 

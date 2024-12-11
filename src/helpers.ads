@@ -26,4 +26,6 @@ package Helpers is
 
    procedure Skip_Whitespace (Line : String; Idx : in out Integer);
 
+   function Char_to_Int(C : Character) return Integer;
+
 end Helpers;

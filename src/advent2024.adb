@@ -13,6 +13,7 @@ with Day7;
 with Day8;
 with Day9;
 with Day10;
+with Day11;
 
 with Helpers; use Helpers;
 
@@ -40,11 +41,12 @@ begin
            when 8 => Day8.Solve (File),
            when 9 => Day9.Solve (File),
            when 10 => Day10.Solve (File),
+           when 11 => Day11.Solve (File),
            when others => raise Program_Error with "Solution not finished");
       --!pp on
 
       --  A few days need to return big integers as their results
-      if not Big_Ints.Contains(Run_Command.Day) then 
+      if not Big_Ints.Contains (Run_Command.Day) then
          Put_Line ("Part 1:" & Answer.Part1'Img);
          Put_Line ("Part 2:" & Answer.Part2'Img);
       end if;

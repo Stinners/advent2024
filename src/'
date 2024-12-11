@@ -1,8 +1,7 @@
 with Ada.Text_IO;         use Ada.Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Containers.Indefinite_Vectors;
-with Ada.Containers.Vectors;
-with Ada.Containers;      use Ada.Containers;
+with Ada.Containers; use Ada.Containers;
 
 package body Day5 is
 
@@ -10,17 +9,20 @@ package body Day5 is
 
    type Rule is array (1 .. 2) of Integer;
 
-   package Rule_Vectors is new Vectors (Index_Type => Natural, Element_Type => Rule);
+   package Rule_Vectors is new Ada.Containers.Indefinite_Vectors
+     (Index_Type => Natural, Element_Type => Rule);
    subtype Rule_Vector is Rule_Vectors.Vector;
 
    -----------------------------------------------------------------
 
-   package Page_Vectors is new Indefinite_Vectors (Index_Type => Natural, Element_Type => Integer);
+   package Page_Vectors is new Ada.Containers.Indefinite_Vectors
+     (Index_Type => Natural, Element_Type => Integer);
    subtype Update is Page_Vectors.Vector;
 
    use Page_Vectors;
 
-   package Update_Vectors is new Indefinite_Vectors (Index_Type => Natural, Element_Type => Update);
+   package Update_Vectors is new Ada.Containers.Indefinite_Vectors
+     (Index_Type => Natural, Element_Type => Update);
    subtype Update_Vector is Update_Vectors.Vector;
 
    -----------------------------------------------------------------

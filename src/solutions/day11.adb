@@ -15,8 +15,19 @@ package body Day11 is
 
    -----------------------------------------------------------------
 
+   procedure Insert_Stones (Stones : in out Stone_Line; Number, Amount : Long_Long_Integer) is
+   begin
+      if Stones.Contains (Number) then
+         Stones (Number) := Stones (Number) + Amount;
+      else
+         Stones.Insert (Number, Amount);
+      end if;
+   end Insert_Stones;
+
+   -----------------------------------------------------------------
+
    function Parse_Input (File : File_Acc) return Stone_Line is
-      Stones            : Stone_Vec;
+      Stones            : Stone_Line;
       Line              : String (1 .. 100);
       Idx, Last, Number : Integer := 1;
       Long_Number       : Long_Long_Integer;
@@ -26,9 +37,7 @@ package body Day11 is
       while Idx < Last loop
          Get (Item => Number, From => Line (Idx .. Last), Last => Last);
          Long_Number := Long_Long_Integer (Number);
-
-         -- TODO create the hashmap
-
+         Insert_Stones (Stones, Long_Number, 1);
          Idx := @ + 1;
       end loop;
 
@@ -37,25 +46,30 @@ package body Day11 is
 
    -----------------------------------------------------------------
 
-   function Blink (Stones : Stone_Vec) return Stone_Vec is
-      Next_Stones : Stone_Vec;
+   function Blink (Stones : Stone_Line) return Stone_Line is
+      Next_Stones : Stone_Line;
       Half        : Integer;
    begin
 
-      for Stone of Stones loop
+      for Number of Stones loop
          declare
-            Stone_Img : constant String  := Stone'Img;
-            Dig       : constant String  := Stone'Img (2 .. Stone_Img'Last);
-            N_Digits  : constant Integer := Dig'Length;
+            Amount    : constant Long_Long_Integer := Stones (Number);
+            Stone_Img : constant String            := Number'Img;
+            Dig       : constant String            := Stone_Img (2 .. Stone_Img'Last);
+            N_Digits  : constant Integer           := Dig'Length;
          begin
-            if Stone = 0 then
-               Next_Stones.Append (1);
+            if Number = 0 then
+               Insert_Stones (Next_Stones, 1, Amount);
             elsif N_Digits mod 2 = 0 then
                Half := N_Digits / 2;
-               Next_Stones.Append (Long_Long_Integer'Value (Dig (Dig'First + Half .. Dig'Last)));
-               Next_Stones.Append (Long_Long_Integer'Value (Dig (Dig'First .. Dig'Last - Half)));
+               Insert_Stones
+                 (Next_Stones, Long_Long_Integer'Value (Dig (Dig'First + Half .. Dig'Last)),
+                  Amount);
+               Insert_Stones
+                 (Next_Stones, Long_Long_Integer'Value (Dig (Dig'First .. Dig'Last - Half)),
+                  Amount);
             else
-               Next_Stones.Append (Stone * 2_024);
+               Insert_Stones (Next_Stones, Number * 2_024, Amount);
             end if;
          end;
       end loop;
@@ -67,17 +81,22 @@ package body Day11 is
    -----------------------------------------------------------------
 
    function Solve (File : File_Acc) return Solution is
-      Part1, Part2 : Integer   := 0;
-      Stones       : Stone_Vec := Parse_Input (File);
+      Part1, Part2 : Long_Long_Integer := 0;
+      Stones       : Stone_Line        := Parse_Input (File);
    begin
 
       for I in 1 .. 25 loop
          Stones := Blink (Stones);
       end loop;
 
-      Part1 := Integer (Stones.Length);
+      for Number of Stones loop
+         Part1 := @ + Stones (Number);
+      end loop;
 
-      return (Part1 => Part1, Part2 => Part2);
+      Part1 := Long_Long_Integer (Stones.Length);
+      Put_Line (Part1'Img);
+
+      return (Part1 => 0, Part2 => 0);
    end Solve;
 
 end Day11;

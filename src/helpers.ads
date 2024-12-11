@@ -1,4 +1,5 @@
-with Ada.Containers.Indefinite_Vectors;
+with Ada.Containers; use Ada.Containers;
+with Ada.Containers.Vectors; 
 with Ada.Containers.Hashed_Maps;
 
 package Helpers is
@@ -7,7 +8,7 @@ package Helpers is
 
    ----------------------------------------------------------------------
 
-   package Int_Vectors is new Ada.Containers.Indefinite_Vectors
+   package Int_Vectors is new Vectors
      (Index_Type => Natural, Element_Type => Integer);
    subtype Int_Vector is Int_Vectors.Vector;
 
@@ -17,7 +18,7 @@ package Helpers is
 
    function Integer_Hash (Key : Integer) return Ada.Containers.Hash_Type;
 
-   package Integer_Hashed_Maps is new Ada.Containers.Hashed_Maps
+   package Integer_Hashed_Maps is new Hashed_Maps
      (Key_Type => Integer, Element_Type => Integer, Hash => Integer_Hash, Equivalent_Keys => "=");
    subtype Int_Hash is Integer_Hashed_Maps.Map;
 

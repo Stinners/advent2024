@@ -1,23 +1,23 @@
 with Ada.Text_IO;         use Ada.Text_IO;
-with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Containers;      use Ada.Containers;
 with Ada.Containers.Hashed_Maps;
 
 package body Day11 is
+    type U64 is range 0 .. 2**64-1;
+    package U64_IO is new Ada.Text_IO.Integer_IO(U64);
 
-   --  We need to do the mod 2**32, otherwise the key becomes too large for Hash_type to compute
-   function Hash_LL_Int (Key : Long_Long_Integer) return Hash_Type is 
+   function Hash_U64 (Key : U64) return Hash_Type is 
      (Hash_Type (Key mod 2**32));
 
    package Stone_Hash is new Hashed_Maps
-     (Key_Type        => Long_Long_Integer, Element_Type => Long_Long_Integer, Hash => Hash_LL_Int,
+     (Key_Type        => U64, Element_Type => U64, Hash => Hash_U64,
       Equivalent_Keys => "=");
    subtype Stone_Line is Stone_Hash.Map;
    use Stone_Hash;
 
    -----------------------------------------------------------------
 
-   procedure Insert_Stones (Stones : in out Stone_Line; Number, Amount : Long_Long_Integer) is
+   procedure Insert_Stones (Stones : in out Stone_Line; Number, Amount : U64) is
    begin
       if Stones.Contains (Number) then
          Stones (Number) := Stones (Number) + Amount;
@@ -30,15 +30,10 @@ package body Day11 is
 
    function Parse_Input (File : File_Acc) return Stone_Line is
       Stones            : Stone_Line;
-      Line              : String (1 .. 100);
-      Idx, Last, Number : Integer := 0;
-      Long_Number       : Long_Long_Integer;
+      Long_Number       : U64;
    begin
-      Get_Line (File.all, Line, Last);
-
-      while Idx < Last loop
-         Get (Item => Number, From => Line (Idx + 1 .. Last), Last => Idx);
-         Long_Number := Long_Long_Integer (Number);
+      while not End_Of_File(File.all) loop
+          U64_IO.Get(Item => Long_Number, File => File.all);
          Insert_Stones (Stones, Long_Number, 1);
       end loop;
     
@@ -52,21 +47,19 @@ package body Day11 is
    begin
       for Stone in Stones.Iterate loop
          declare
-            Number    : constant Long_Long_Integer := Key (Stone);
-            Amount    : constant Long_Long_Integer := Element (Stone);
-            Dig       : constant String            := Number'Img (2 .. Number'Img'Last);
-            N_Digits  : constant Integer           := Dig'Length;
-            Half      : constant Integer           := N_Digits / 2;
+            Number    : constant U64     := Key (Stone);
+            Amount    : constant U64     := Element (Stone);
+            Dig       : constant String  := Number'Img (2 .. Number'Img'Last);
+            N_Digits  : constant Integer := Dig'Length;
+            Half      : constant Integer := N_Digits / 2;
          begin
             if Number = 0 then
                Insert_Stones (Next_Stones, 1, Amount);
             elsif N_Digits mod 2 = 0 then
                Insert_Stones
-                 (Next_Stones, Long_Long_Integer'Value (Dig (Dig'First + Half .. Dig'Last)),
-                  Amount);
+                 (Next_Stones, U64'Value (Dig (Dig'First + Half .. Dig'Last)), Amount);
                Insert_Stones
-                 (Next_Stones, Long_Long_Integer'Value (Dig (Dig'First .. Dig'Last - Half)),
-                  Amount);
+                 (Next_Stones, U64'Value (Dig (Dig'First .. Dig'Last - Half)), Amount);
             else
                Insert_Stones (Next_Stones, Number * 2_024, Amount);
             end if;
@@ -78,8 +71,8 @@ package body Day11 is
 
    -----------------------------------------------------------------
    
-   function Blink_N_Times(Stones : in out Stone_Line; N : Integer) return Long_Long_Integer is 
-       Sum : Long_Long_Integer := 0;
+   function Blink_N_Times(Stones : in out Stone_Line; N : Integer) return U64 is 
+       Sum : U64 := 0;
    begin 
        for I in 1 .. N loop 
           Stones := Blink (Stones);
@@ -95,7 +88,7 @@ package body Day11 is
    -----------------------------------------------------------------
 
    function Solve (File : File_Acc) return Solution is
-      Part1, Part2 : Long_Long_Integer;
+      Part1, Part2 : U64;
       Stones       : Stone_Line := Parse_Input (File);
    begin
       Part1 := Blink_N_Times(Stones, 25);

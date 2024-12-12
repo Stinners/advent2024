@@ -78,14 +78,14 @@ package body Day9 is
            Current_File := Memory(File_End);
            File_Start := File_End;
 
-           -- Find the start of that block 
+           --  Find the start of that block 
            for Idx in reverse Memory.First_Index .. File_End loop
                exit when Memory (Idx) /= Current_File;
                File_Start := Idx;
            end loop;
            Block_Size := File_End - File_Start;
 
-           -- Look for an empty section of the correct size 
+           --  Look for an empty section of the correct size 
            for Empty_End in Memory.First_Index .. File_Start loop 
 
                 if not In_Empty and Memory(Empty_End) = -1 then 

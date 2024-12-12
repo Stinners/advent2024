@@ -21,7 +21,7 @@ procedure Advent2024 is
    Run_Command : Input.Run;
    File        : Input.File_Acc;
    Answer      : Input.Solution;
-   Big_Ints    : constant Int_Vector := [7, 9];
+   Big_Ints    : constant Int_Vector := [7, 9, 11];
 begin
 
    begin

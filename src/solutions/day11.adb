@@ -5,7 +5,9 @@ with Ada.Containers.Hashed_Maps;
 
 package body Day11 is
 
-   function Hash_LL_Int (Key : Long_Long_Integer) return Hash_Type is (Hash_Type (Key));
+   --  We need to do the mod 2**32, otherwise the key becomes too large for Hash_type to compute
+   function Hash_LL_Int (Key : Long_Long_Integer) return Hash_Type is 
+     (Hash_Type (Key mod 2**32));
 
    package Stone_Hash is new Hashed_Maps
      (Key_Type        => Long_Long_Integer, Element_Type => Long_Long_Integer, Hash => Hash_LL_Int,
@@ -29,18 +31,17 @@ package body Day11 is
    function Parse_Input (File : File_Acc) return Stone_Line is
       Stones            : Stone_Line;
       Line              : String (1 .. 100);
-      Idx, Last, Number : Integer := 1;
+      Idx, Last, Number : Integer := 0;
       Long_Number       : Long_Long_Integer;
    begin
       Get_Line (File.all, Line, Last);
 
       while Idx < Last loop
-         Get (Item => Number, From => Line (Idx .. Last), Last => Last);
+         Get (Item => Number, From => Line (Idx + 1 .. Last), Last => Idx);
          Long_Number := Long_Long_Integer (Number);
          Insert_Stones (Stones, Long_Number, 1);
-         Idx := @ + 1;
       end loop;
-
+    
       return Stones;
    end Parse_Input;
 
@@ -48,20 +49,18 @@ package body Day11 is
 
    function Blink (Stones : Stone_Line) return Stone_Line is
       Next_Stones : Stone_Line;
-      Half        : Integer;
    begin
-
-      for Number of Stones loop
+      for Stone in Stones.Iterate loop
          declare
-            Amount    : constant Long_Long_Integer := Stones (Number);
-            Stone_Img : constant String            := Number'Img;
-            Dig       : constant String            := Stone_Img (2 .. Stone_Img'Last);
+            Number    : constant Long_Long_Integer := Key (Stone);
+            Amount    : constant Long_Long_Integer := Element (Stone);
+            Dig       : constant String            := Number'Img (2 .. Number'Img'Last);
             N_Digits  : constant Integer           := Dig'Length;
+            Half      : constant Integer           := N_Digits / 2;
          begin
             if Number = 0 then
                Insert_Stones (Next_Stones, 1, Amount);
             elsif N_Digits mod 2 = 0 then
-               Half := N_Digits / 2;
                Insert_Stones
                  (Next_Stones, Long_Long_Integer'Value (Dig (Dig'First + Half .. Dig'Last)),
                   Amount);
@@ -75,26 +74,35 @@ package body Day11 is
       end loop;
 
       return Next_Stones;
-
    end Blink;
+
+   -----------------------------------------------------------------
+   
+   function Blink_N_Times(Stones : in out Stone_Line; N : Integer) return Long_Long_Integer is 
+       Sum : Long_Long_Integer := 0;
+   begin 
+       for I in 1 .. N loop 
+          Stones := Blink (Stones);
+       end loop;
+
+       for Number of Stones loop
+          Sum := @ + Number;
+       end loop;
+
+       return Sum;
+   end Blink_N_Times;
 
    -----------------------------------------------------------------
 
    function Solve (File : File_Acc) return Solution is
-      Part1, Part2 : Long_Long_Integer := 0;
-      Stones       : Stone_Line        := Parse_Input (File);
+      Part1, Part2 : Long_Long_Integer;
+      Stones       : Stone_Line := Parse_Input (File);
    begin
+      Part1 := Blink_N_Times(Stones, 25);
+      Part2 := Blink_N_Times(Stones, 50);
 
-      for I in 1 .. 25 loop
-         Stones := Blink (Stones);
-      end loop;
-
-      for Number of Stones loop
-         Part1 := @ + Stones (Number);
-      end loop;
-
-      Part1 := Long_Long_Integer (Stones.Length);
-      Put_Line (Part1'Img);
+      Put_Line ("Part1:" & Part1'Img);
+      Put_Line ("Part2:" & Part2'Img);
 
       return (Part1 => 0, Part2 => 0);
    end Solve;

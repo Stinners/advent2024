@@ -1,5 +1,5 @@
 with Ada.Containers; use Ada.Containers;
-with Ada.Containers.Vectors; 
+with Ada.Containers.Vectors;
 with Ada.Containers.Hashed_Maps;
 
 package Helpers is
@@ -8,8 +8,7 @@ package Helpers is
 
    ----------------------------------------------------------------------
 
-   package Int_Vectors is new Vectors
-     (Index_Type => Natural, Element_Type => Integer);
+   package Int_Vectors is new Vectors (Index_Type => Natural, Element_Type => Integer);
    subtype Int_Vector is Int_Vectors.Vector;
 
    package Int_Sorter is new Int_Vectors.Generic_Sorting;
@@ -26,6 +25,6 @@ package Helpers is
 
    procedure Skip_Whitespace (Line : String; Idx : in out Integer);
 
-   function Char_to_Int(C : Character) return Integer;
+   function Char_to_Int (C : Character) return Integer;
 
 end Helpers;

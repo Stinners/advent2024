@@ -99,12 +99,10 @@ package body Day12 is
                Next_Point := This_Point + Step;
 
                if not In_Bounds (Next_Point, Size) then
-                  Perimiter := @ + 1;
                   Edges.Include ((This_Point, Dir));
 
                else
                   if This_Plant /= Garden (Next_Point.X, Next_Point.Y) then
-                     Perimiter := @ + 1;
                      Edges.Include ((This_Point, Dir));
                   elsif not Visited.Contains (Next_Point) then
                      To_Check.Append (Next_Point);
@@ -114,7 +112,8 @@ package body Day12 is
          end if;
       end loop;
 
-      N_Edges := Find_Number_Edges (Edges);
+      Perimiter := Integer (Edges.Length);
+      N_Edges   := Find_Number_Edges (Edges);
 
       return (Part1 => Perimiter * Area, Part2 => N_Edges * Area);
    end Find_Cost;

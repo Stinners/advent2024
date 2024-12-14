@@ -15,6 +15,7 @@ with Day9;
 with Day10;
 with Day11;
 with Day12;
+with Day13;
 
 with Helpers; use Helpers;
 
@@ -22,7 +23,7 @@ procedure Advent2024 is
    Run_Command : Input.Run;
    File        : Input.File_Acc;
    Answer      : Input.Solution;
-   Big_Ints    : constant Int_Vector := [7, 9, 11];
+   Big_Ints    : constant Int_Vector := [7, 9, 11, 13];
 begin
 
    begin
@@ -44,6 +45,7 @@ begin
            when 10 => Day10.Solve (File),
            when 11 => Day11.Solve (File),
            when 12 => Day12.Solve (File),
+           when 13 => Day13.Solve (File),
            when others => raise Program_Error with "Solution not finished");
       --!pp on
 

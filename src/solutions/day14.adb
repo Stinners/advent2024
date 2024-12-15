@@ -1,7 +1,7 @@
 with Ada.Text_IO;    use Ada.Text_IO;
-with Ada.Containers.Vectors;
 with Ada.Containers; use Ada.Containers;
 with GNAT.Regpat;    use GNAT.Regpat;
+with Ada.Containers.Vectors;
 
 with Vector2D; use Vector2D;
 

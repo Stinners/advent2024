@@ -16,6 +16,7 @@ with Day10;
 with Day11;
 with Day12;
 with Day13;
+with Day14;
 
 with Helpers; use Helpers;
 
@@ -46,6 +47,7 @@ begin
            when 11 => Day11.Solve (File),
            when 12 => Day12.Solve (File),
            when 13 => Day13.Solve (File),
+           when 14 => Day14.Solve (File),
            when others => raise Program_Error with "Solution not finished");
       --!pp on
 

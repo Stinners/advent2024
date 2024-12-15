@@ -45,6 +45,7 @@ package Vector2D is
 
    function GCD (V : Vec2D) return Integer;
 
+   function Manhattan_Norm (U, V : Vec2D) return Integer;
    ------------------------------------------------------------------
 
 end Vector2D;

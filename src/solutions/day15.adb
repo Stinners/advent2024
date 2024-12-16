@@ -35,28 +35,40 @@ package body Day15 is
 
    ------------------------------------------------------
 
+   procedure Print_Grid (Grid : Grid_Type; Size : Vec2D) is
+   begin
+      for Y in 1 .. Size.Y loop
+         for X in 1 .. Size.X loop
+            Put (Grid (X, Y));
+         end loop;
+         Put_Line ("");
+      end loop;
+   end Print_Grid;
+
+   ------------------------------------------------------
+
    function Create_Grid2 (Old_Grid : Grid_Type; Size : Vec2D) return Grid_Type is
       Tile : Character;
       Grid : Grid_Type;
-      X2 : Integer;
+      X2   : Integer;
    begin
-      for Y in 1 .. Size.Y  loop
+      for Y in 1 .. Size.Y loop
          for X in 1 .. Size.X loop
             Tile := Old_Grid (X, Y);
-            X2 := 2 * X;
+            X2   := 2 * X;
 
             if Tile = '#' then
-               Grid (X2-1 ,  Y)     := '#';
-               Grid (X2, Y) := '#';
+               Grid (X2 - 1, Y) := '#';
+               Grid (X2, Y)     := '#';
             elsif Tile = 'O' then
-               Grid (X2-1, Y)     := '[';
-               Grid (X2, Y) := ']';
+               Grid (X2 - 1, Y) := '[';
+               Grid (X2, Y)     := ']';
             elsif Tile = '.' then
-               Grid (X2-1 , Y)     := '.';
-               Grid (X2, Y) := '.';
+               Grid (X2 - 1, Y) := '.';
+               Grid (X2, Y)     := '.';
             elsif Tile = '@' then
-               Grid (X2-1, Y)     := '@';
-               Grid (X2, Y) := '.';
+               Grid (X2 - 1, Y) := '@';
+               Grid (X2, Y)     := '.';
             end if;
 
          end loop;
@@ -67,31 +79,81 @@ package body Day15 is
 
    ------------------------------------------------------
 
-   --  Have two Move functions for part 2 
-   -- Side to side movement is basically the same as part 1 
-   -- Up and down movement finds both sides of the box and calleds Move2 on both of them 
-
-   function Move (Grid : in out Grid_Type; Start, Dir : Vec2D) return Boolean is
+   function Other_Box_Side (Grid : Grid_Type; Start : Vec2D) return Vec2D is
       This_Char : constant Character := Grid (Start.X, Start.Y);
-      Next_Pos  : constant Vec2D     := Start + Dir;
-      Next_Char : constant Character := Grid (Next_Pos.X, Next_Pos.Y);
-      Can_Move  : Boolean;
    begin
+      if This_Char = '[' then
+         return Start + Unit_Vectors (Right);
+      elsif This_Char = ']' then
+         return Start + Unit_Vectors (Left);
+      else
+         raise Program_Error with "Invalid Box Character:" & This_Char'Img;
+      end if;
+   end Other_Box_Side;
+
+   ------------------------------------------------------
+
+   function Check_Can_Move (Grid : Grid_Type; Start, Dir : Vec2D) return Boolean is
+      Next_Pos    : constant Vec2D     := Start + Dir;
+      Next_Char   : constant Character := Grid (Next_Pos.X, Next_Pos.Y);
+      Is_Vertical : constant Boolean   := Dir.Y /= 0;
+      Other_Side  : Vec2D;
+   begin
+      --  Generic Rules
       if Next_Char = '#' then
-         Can_Move := False;
+         return False;
+
       elsif Next_Char = '.' then
-         Can_Move := True;
+         return True;
+
+         --  Part 1 Rule
       elsif Next_Char = 'O' then
-         Can_Move := Move (Grid, Next_Pos, Dir);
+         return Check_Can_Move (Grid, Next_Pos, Dir);
+
+         --  Part 2 Rules
+      elsif (Next_Char = '[' or else Next_Char = ']') and then not Is_Vertical then
+         return Check_Can_Move (Grid, Next_Pos, Dir);
+
+         --  Width 2 boxes can only move vertically if both parts can move
+      elsif (Next_Char = '[' or else Next_Char = ']') and then Is_Vertical then
+         Other_Side := Other_Box_Side (Grid, Next_Pos);
+
+         return
+           Check_Can_Move (Grid, Next_Pos, Dir) and then Check_Can_Move (Grid, Other_Side, Dir);
+
+      else
+         raise Program_Error with "Invalid Character Type";
+
       end if;
 
-      if Can_Move then
-         Grid (Start.X, Start.Y)       := '.';
-         Grid (Next_Pos.X, Next_Pos.Y) := This_Char;
+      --  Part2 Rules
+   end Check_Can_Move;
+
+   ------------------------------------------------------
+
+   procedure Do_Move (Grid : in out Grid_Type; Start, Dir : Vec2D) is
+      Next_Pos    : constant Vec2D     := Start + Dir;
+      This_Char   : constant Character := Grid (Start.X, Start.Y);
+      Next_Char   : constant Character := Grid (Next_Pos.X, Next_Pos.Y);
+      Is_Vertical : constant Boolean   := Dir.Y /= 0;
+      Other_Side  : Vec2D;
+   begin
+      --  Move the other side of the box if necessary
+      if (Next_Char = '[' or else Next_Char = ']') and then Is_Vertical then
+         Other_Side := Other_Box_Side (Grid, Next_Pos);
+         Do_Move (Grid, Other_Side, Dir);
       end if;
 
-      return Can_Move;
-   end Move;
+      -- Check if the block ahead needs to be move d
+      if Next_Char = 'O' or else Next_Char = '[' or else Next_Char = ']' then
+         Do_Move (Grid, Next_Pos, Dir);
+      end if;
+
+      --  Do the actual move
+      Grid (Next_Pos.X, Next_Pos.Y) := This_Char;
+      Grid (Start.X, Start.Y)       := '.';
+
+   end Do_Move;
 
    ------------------------------------------------------
 
@@ -119,26 +181,14 @@ package body Day15 is
                Dir := Unit_Vectors (Down);
             end if;
 
-            if Move (Grid, Robot, Dir) then
+            if Check_Can_Move (Grid, Robot, Dir) then
+               Do_Move (Grid, Robot, Dir);
                Robot := @ + Dir;
             end if;
-
          end loop;
       end loop;
 
    end Calculate_Path;
-
-   ------------------------------------------------------
-
-   procedure Print_Grid (Grid : Grid_Type; Size : Vec2D) is
-   begin
-      for Y in 1 .. Size.Y loop
-         for X in 1 .. Size.X loop
-            Put (Grid (X, Y));
-         end loop;
-         Put_Line ("");
-      end loop;
-   end Print_Grid;
 
    ------------------------------------------------------
 
@@ -149,24 +199,23 @@ package body Day15 is
       Robot, Robot2 : Vec2D;
    begin
       Parse_Grid (File, Grid, Size, Robot);
-      Grid2 := Create_Grid2 (Grid, Size);
-      Calculate_Path (File, Grid, Robot);
+      Grid2    := Create_Grid2 (Grid, Size);
+      Robot2   := Robot;
+      Robot2.X := Robot.X * 2 - 1;
+      Size2    := Size;
+      Size2.X  := Size2.X * 2;
 
-      for Y in 1 .. Size.Y loop
-         for X in 1 .. Size.X loop
-            if Grid (X, Y) = 'O' then
+      ------------------------------------------
+
+      Calculate_Path (File, Grid2, Robot2);
+
+      for Y in 1 .. Size2.Y loop
+         for X in 1 .. Size2.X loop
+            if Grid2 (X, Y) = 'O' or else Grid2 (X, Y) = '[' then
                Part1 := @ + (X - 1) + 100 * (Y - 1);
             end if;
          end loop;
       end loop;
-
-      ------------------------------------------
-
-      Size2 := (Size with delta X => Size.X * 2);
-      Put_Line(Size2'Img);
-      Print_Grid(Grid2, Size2);
-
-
 
       return (Part1 => Part1, Part2 => Part2);
    end Solve;

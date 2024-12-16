@@ -41,6 +41,19 @@ package body Vector2D is
    begin
       return Distance.X + Distance.Y;
    end Manhattan_Norm;
+
+   -----------------------------------------------------------
+
+   function "+" (V : Vec2D; Dir : Direction) return Vec2D is (V + Unit_Vectors (Dir));
+
+   ------------------------------------------------------------------
+
+   function Turn_Clockwise (Dir : Direction) return Direction is
+     ((case dir is when Up => Right, when Right => Down, when Down => Left, when Left => Up));
+
+   function Turn_Anti_Clockwise (Dir : Direction) return Direction is
+     ((case dir is when Up => Left, when Left => Down, when Down => Right, when Right => Up));
+
    ------------------------------------------------------------------
 
 end Vector2D;

@@ -35,18 +35,6 @@ package body Day15 is
 
    ------------------------------------------------------
 
-   procedure Print_Grid (Grid : Grid_Type; Size : Vec2D) is
-   begin
-      for Y in 1 .. Size.Y loop
-         for X in 1 .. Size.X loop
-            Put (Grid (X, Y));
-         end loop;
-         Put_Line ("");
-      end loop;
-   end Print_Grid;
-
-   ------------------------------------------------------
-
    function Create_Grid2 (Old_Grid : Grid_Type; Size : Vec2D) return Grid_Type is
       Tile : Character;
       Grid : Grid_Type;

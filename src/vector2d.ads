@@ -39,6 +39,8 @@ package Vector2D is
    Neighbour_Vectors : constant Neighbour_Vector_Type :=
      [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, 1), (1, -1), (1, 1), (-1, -1)];
 
+   function "+" (V : Vec2D; Dir : Direction) return Vec2D;
+
    ------------------------------------------------------------------
 
    function In_Bounds (V, Size : Vec2D) return Boolean;
@@ -46,6 +48,12 @@ package Vector2D is
    function GCD (V : Vec2D) return Integer;
 
    function Manhattan_Norm (U, V : Vec2D) return Integer;
+
+   ------------------------------------------------------------------
+
+   function Turn_Clockwise (Dir : Direction) return Direction;
+   function Turn_Anti_Clockwise (Dir : Direction) return Direction;
+
    ------------------------------------------------------------------
 
 end Vector2D;

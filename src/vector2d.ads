@@ -40,6 +40,7 @@ package Vector2D is
      [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, 1), (1, -1), (1, 1), (-1, -1)];
 
    function "+" (V : Vec2D; Dir : Direction) return Vec2D;
+   function "-" (V : Vec2D; Dir : Direction) return Vec2D;
 
    ------------------------------------------------------------------
 

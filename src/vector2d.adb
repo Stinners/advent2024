@@ -45,6 +45,7 @@ package body Vector2D is
    -----------------------------------------------------------
 
    function "+" (V : Vec2D; Dir : Direction) return Vec2D is (V + Unit_Vectors (Dir));
+   function "-" (V : Vec2D; Dir : Direction) return Vec2D is (V - Unit_Vectors (Dir));
 
    ------------------------------------------------------------------
 
